@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        .btn{
+          width: 68px;
+          height: 25px;
+          border: 1px solid;
+          border-radius: 4px;
+        }
+        .circle {
+          display: inline-block;
+          border-radius: 12px;
+          background-color: green;
+          height: 25px;
+          width:25px;
+          color:green;
+        }
+        .turnon {
+            -webkit-animation: turnon 1s;
+            -webkit-animation-fill-mode:forwards; /*停留在最后的位置*/
+        }
+        .turnoff {
+            -webkit-animation: turnoff 1s;
+            -webkit-animation-fill-mode:forwards;
+        }
+
+        @-webkit-keyframes turnon /* Safari and Chrome */
+        {
+            from {background: green; margin-left:0px;}
+            to {background: grey; margin-left:43px;}
+        }
+
+        @-webkit-keyframes turnoff /* Safari and Chrome */
+        {
+            from {background: grey; margin-left:43px;}
+            to {background: green; margin-left:0px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="btn" onclick="turn()" id="btn">
+        <span class="circle" id="circle"></span>
+    </div>
+    <script type="text/javascript">
+        var flag = true;
+        btn = document.getElementById('btn');
+        circle = document.getElementById('circle');
+        function turn() {
+            if(flag){
+                var idx = circle.className.indexOf('turnoff');
+                if( idx !== -1) {
+                    circle.className = circle.className.substring(0, idx - 1);
+                }
+
+                circle.className += " turnon";
+                flag = false;
+            } else {
+                var idx = circle.className.indexOf('turnon');
+                if( idx !== -1) {
+                    circle.className = circle.className.substring(0, idx -1);
+                }
+
+                circle.className += " turnoff";
+                flag = true;
+            }
+        }
+    </script>
+</body>
+</html>
