@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>event</title>
+</head>
+<body>
+    <div>
+        <button id="btnsrc">触发自定义事件</button>
+        <button id="btnown">自定义事件</button>
+    </div>
+    <script type="text/javascript">
+        var btnown = document.getElementById("btnown");
+        var btnsrc = document.getElementById("btnsrc");
+
+        //监听事件
+        btnown.addEventListener("myEvent", function(event){
+            alert("触发类型:" + event.type)
+        });
+
+        //创建自定义事件
+        var ownEvent = document.createEvent("HTMLEvents");
+        ownEvent.initEvent("myEvent", false, false);
+
+        btnsrc.onclick = function callOwnEvent () {
+            //派发事件
+            btnown.dispatchEvent(ownEvent);
+        }
+
+        btnown.onclick = function fireOwnEvent () {
+            //派发事件
+            btnown.dispatchEvent(ownEvent);
+        }
+    </script>
+</body>
+</html>
