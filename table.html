@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>table</title>
+    <style type="text/css">
+        .newbtn {
+            border: 1px solid grey;
+            border-radius: 4px;
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            cursor: pointer;
+        }
+        th, td{
+            border: 1px solid grey;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="newbtn" onclick="addrow()">新增</div>
+        <table id="table">
+            <thead>
+                <tr>
+                    <th>数据项</th>
+                    <th colspan="2">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        var tb = document.getElementById('table');
+        function addrow() {
+            // body...
+            tmpTr = document.createElement('tr');
+
+            //td1
+            tmpTd1 = document.createElement('td');
+            tmpInput = document.createElement('input');
+            tmpInput.value = "input";
+            tmpInput.style.color = "black";
+
+            tmpInput.disabled = "true"; //文字和背景会变成不可编辑的颜色
+            // tmpInput.readOnly = "true"; //文字颜色和背景不会变色。
+
+            tmpTd1.appendChild(tmpInput);
+
+            //td2 编辑/保存按钮
+            tmpTd2 = document.createElement('td');
+            tmpTd2Text = document.createTextNode('编辑');
+            tmpTd2.appendChild(tmpTd2Text);
+            tmpTd2.style.cursor = 'pointer';
+
+            //td3 删除按钮
+            tmpTd3 = document.createElement('td');
+            tmpTd3Text = document.createTextNode('删除');
+            tmpTd3.appendChild(tmpTd3Text);
+            tmpTd3.style.cursor = 'pointer';
+
+            tmpTr.appendChild(tmpTd1);
+            tmpTr.appendChild(tmpTd2);
+            tmpTr.appendChild(tmpTd3);
+
+            tb.appendChild(tmpTr);
+
+            tmpTd2.onclick = function edit () {
+                editRow(event);
+            }
+
+            tmpTd3.onclick = function del() {
+                delRow(event);
+            }
+
+        }
+
+        function editRow (ev) {
+            var self = ev.currentTarget;
+
+            if (self.innerHTML == '编辑') {
+                var input = self.parentNode.childNodes[0].childNodes[0];
+                input.removeAttribute('disabled');
+                self.innerHTML = "保存";
+            } else {
+                var input = self.parentNode.childNodes[0].childNodes[0];
+                input.setAttribute('disabled', 'true');
+                self.innerHTML = "编辑";
+            }
+        }
+
+        function delRow (ev) {
+            var self = ev.currentTarget; //td 删除按钮
+            var parent = self.parentNode; //tr
+            var ancestor = parent.parentNode; //table
+            var children = parent.childNodes; //tr中的所有td
+            for (var i = children.length - 1; i >= 0; i--) {
+                 parent.removeChild(children[i]);
+            };
+            ancestor.removeChild(parent);
+        }
+
+        /*****************************
+        getAttribute() 方法，用来获取元素特性。接受一个参数，即要获得元素的特性名
+        setAttribute() 方法，用来设置元素特性。接受两个参数，即要获得元素的特性名和特性值
+        removeAttribute() 方法，用来移除元素的特性。接受一个参数，即要移除元素的特性名
+        */
+    </script>
+</body>
+</html>
