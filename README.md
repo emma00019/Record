@@ -1,18 +1,18 @@
-#Record
--克隆项目
+# Record
++ 克隆项目
 ```sh
     git clone https://github.com/emma00019/Record.git
 ```
 
-# switch
--实现开关的功能
--描述
+# Switch
++ 实现开关的功能
++ 描述
 ```sh
 	使用html，原生js和css3动画实现开关的开关效果。
 	默认状态是开（绿色），关闭状态是灰色。
 	2016-8-24第一次的尝试，以后想到更好的再做修改。
 ```
--使用的知识点
++ 使用的知识点
 ```sh
     @keyframes name //普通
     {
@@ -30,9 +30,9 @@
 
 ```
 
-＃table
--实现在表格中添加一行，编辑/删除某行的功能
--使用的知识点
+# Table
++ 实现在表格中添加一行，编辑/删除某行的功能
++ 使用的知识点
 ```sh
     创建元素:document.createElement(tag)
     创建内容：document.createTextNode(text)
