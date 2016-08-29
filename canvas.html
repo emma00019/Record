@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .bearCanvas {
+            border: 1px solid #000;
+/*          width: 500px;
+            height: 500px;
+            不能在style中设置宽和高，如果在这里设置的话会出现画的圆不是圆。具体原因未知。
+*/
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bearCanvas" class="bearCanvas" width="500px" height="500px"></canvas>
+    <script type="text/javascript">
+    function drawBear () {
+        var bear = document.getElementById('bearCanvas');
+
+        if (bear.getContext) {
+            var cxt = bear.getContext("2d");
+
+            drawCircle(cxt, 250, 224, 191, 2, 'white'); //小熊所在的外部圆圈
+            drawEars(cxt); //绘制左右耳朵
+            bearBody(cxt, 128, 241, 245, 40, 334, 140, "#000"); //绘制脖子和身体
+            drawEllipse(cxt, 250, 210, 140, 118, 2, "#000"); //绘制脑袋
+            drawEyeBrow(cxt, 20, 10, 168, 133, 130, 32, "#fff"); //左眉毛
+            drawEyeBrow(cxt, 20, 10, 298, 130, 133, 32, "#fff"); //右眉毛
+
+            //左眼
+            cxt.moveTo(160, 170);
+            paintRotatedOval(cxt, 186, 170, 26, 27, 2, "#fff", 90);
+            cxt.moveTo(182, 170);
+            drawEllipse(cxt, 192, 170, 4, 10, 2, "#000");
+            //右眼
+            cxt.moveTo(273, 170);
+            paintRotatedOval(cxt, 300, 170, 26, 27, 2, "#fff", 90);
+            cxt.moveTo(308, 170);
+            drawEllipse(cxt, 312, 170, 4, 10, 2, "#000");
+
+            //嘴区域
+            cxt.moveTo(186, 243);
+            drawEllipse(cxt, 251, 243, 65, 52, 2, "#fff");
+            //嘴
+            paintQuadratic(cxt, 240, 196, 253, 110, "#000");
+            paintQuadratic(cxt, 290, 196, 253, 110, "#000");
+
+            //鼻子
+            cxt.moveTo(228, 217);
+            drawEllipse(cxt, 248, 217, 20, 17, 1, "#000");
+            cxt.moveTo(228, 142);
+            paintRotatedOval(cxt, 248, 142, 20, 13, 1, "#000", 180);
+
+            //腮红
+            cxt.moveTo(99, 227);
+            drawCircle(cxt, 133, 227, 34, 2, "rgb(255,0,2)");
+            drawCircle(cxt, 366, 227, 34, 2, "rgb(255,0,2)");
+
+            //背景
+            var v_color = 'rgb(174,0,0)';
+            paintBackgroundColor(cxt, v_color);
+            //文字
+            cxt.globalCompositeOperation = "source-over";
+            var inTxt = "你为什么不学习？！";
+            var txtColor = "#fff";
+            paintText(cxt, inTxt,txtColor);
+        };
+    }
+    var eventUtil = {
+        addHandler: function (ele, type, handler) {
+            if (ele.addEventListener) {
+                ele.addEventListener(type, handler, false);
+            } else if (ele.attachEvent){
+                ele.attachEvent("on" + type, handler);
+            } else {
+                ele["on" + type] = handler;
+            }
+        },
+        removeHandler: function (ele, type, handler) {
+            if (ele.removeEventListener) {
+                ele.removeEventListener(type, handler, false);
+            } else if (ele.detachEvent) {
+                ele.detachEvent("on" + type, handler);
+            } else {
+                ele["on" + type] = null;
+            }
+        }
+    }
+    function paintBackgroundColor (cxt, bgcolor) {
+        cxt.globalCompositeOperation = "destination-over";
+        cxt.fillStyle = bgcolor;
+        cxt.fillRect(0, 0, 500, 500)
+    }
+    function drawCircle (cxt, x, y, r, arc, color) {
+        cxt.fillStyle = color;
+        cxt.beginPath();//如果不开启新的路径，之前的fill或stroke会重绘之前的路径
+        cxt.arc(x, y, r, 0, arc * Math.PI, false);
+        // cxt.closePath(); //因为是2PI，所以可以不用closePath进行线路的闭合
+        cxt.fill();
+    }
+
+    function drawEars (ctx) {
+        // left ear
+        drawCircle(ctx, 138, 120, 28, 2, "#000");//调用 drawCircle，如果drawCircle中没有启用新的路径，则这里绘制的黑色会被下面的白色重绘一遍就看不到黑圈了。
+        drawCircle(ctx, 138, 120, 15, 2, "#fff");
+        //right ear
+        drawCircle(ctx, 365, 120, 28, 2, "#000");
+        drawCircle(ctx, 365, 120, 15, 2, "#fff");
+    }
+
+    //画椭圆
+    function drawEllipse (ctx, x, y, a, b, arc, color) {
+        ctx.save();
+        var r = (a > b) ? a : b;
+        var ratioX = a / r;
+        var ratioY = b / r;
+        ctx.scale(ratioX, ratioY);//下面绘制的图形会两倍的扩大，包括定位和长宽等（把圆形变形成椭圆形）。（ratioX缩放当前绘图的宽度，rationY缩放当前绘图的高度）
+        ctx.beginPath();
+        ctx.arc(x / ratioX, y / ratioY, r, 0, arc * Math.PI, false);
+        // ctx.closePath(); //一个完整的圆不需要进行路径的闭合
+        ctx.restore(); //恢复原状不需要缩放
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    //画眉毛
+    function drawEyeBrow (ctx, h1, h2, x0, y0, y1, d, sColor) {
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);//第一条贝赛尔曲线的源点
+        var x1 = x0 + d; //第一条贝赛尔曲线的结束点，第二条贝赛尔曲线的源点
+        var cp1x = x0 + d / 2; //两条曲线控制点的x轴坐标
+        var cp1y = y0 - h1; //第一条贝赛尔曲线控制点的y轴坐标
+        var cp2y = y0 - h2;
+        ctx.quadraticCurveTo(cp1x, cp1y, x1, y1);// 贝赛尔曲线（cp1x,cp1y是控制点；x1,y1是结束点）
+        ctx.quadraticCurveTo(cp1x, cp2y, x0, y0);//这条曲线的源点是x1,y1,结束点刚好是第一条曲线的源点，所以刚好第一条和第二天的开头和结尾会重叠在一起。
+        ctx.fillStyle = sColor;
+        ctx.fill();
+    }
+
+    //眼
+    function paintRotatedOval(ctx, x, y, a, b, i, sColor, ang) {
+        ctx.save();// 保存当前状态，等缩放，平移旋转完成后恢复当前的状态。
+        var r = (a > b) ? a : b; //【绘制眼时，r=b=27 a=26】
+        var ratioX = a / r;
+        var ratioY = b / r;//1
+        ctx.translate(x / ratioX, y / ratioY); //平移坐标的位置
+        ctx.rotate(ang * Math.PI / 180); //旋转角度以弧度计算
+        ctx.scale(ratioX, ratioY); //缩放
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, i * Math.PI, false); //(中心点x，中心点y，半径，起始角度，结束角度，顺/逆时针旋转)
+        ctx.closePath();
+        ctx.restore();//恢复原先状态后面不需要平移,缩放,旋转等操作
+        ctx.fillStyle = sColor;
+        ctx.fill();
+    }
+
+    //嘴
+    function paintQuadratic(ctx, cpy, x0, y0, d, sColor) {
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        var x1 = x0 + d;
+        var cpx = x0 + d / 2;
+        ctx.quadraticCurveTo(cpx, cpy, x1, y0);//贝赛尔曲线
+        ctx.closePath();
+        ctx.fillStyle = sColor;
+        ctx.fill();
+    }
+
+    //身体
+    function bearBody(ctx, x0, y0, rectW, rectH, trapW, trapH, sColor) {
+        /*梯形（脖子下面的body）*/
+        var x1 = x0 - (trapW - rectW) / 2;
+        var y1 = y0 + rectH + trapH;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0 + rectH);
+        ctx.lineTo(x1, y1);
+        ctx.lineTo(x1 + trapW, y1);
+        ctx.lineTo(x0 + rectW, y0 + rectH);
+        ctx.closePath();//如果是绘制边框，那么我们需要用closePath()来描绘闭合的线条，如果是用填充颜色来进行描绘，我们不需要使用closePath来描绘闭合的曲线，因为即便没有也可以填充，最后的边框是显示不出来的，除非边框需要用额外的颜色显示。
+        ctx.fillStyle = sColor;
+        ctx.strokeStyle = sColor;
+        ctx.stroke();
+        // ctx.globalCompositeOperation = "source-atop";
+        ctx.fill();
+        /*矩形（脖子）*/
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x0 + rectW, y0);
+        ctx.lineTo(x0 + rectW, y0 + rectH);
+        ctx.lineTo(x0, y0 + rectH);
+        ctx.lineTo(x0, y0);
+        ctx.fill();
+    }
+
+    //文字
+    function paintText(ctx, txt,sColor) {
+        ctx.font = "bold 36px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseLine = "middle";
+        ctx.fillStyle = sColor;
+        ctx.fillText(txt, 250, 462);
+    }
+
+    window.onload = function () {
+        drawBear();
+    }
+    </script>
+</body>
+</html>
