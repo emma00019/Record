@@ -46,6 +46,10 @@
              parent.removeChild(children[i]);
         };
 ```
+```sh
+    最后一行的样式可以使用 tr:last-child 进行设置
+    第一行的样式可以使用 tr:first-child 进行设置
+```
 
 # Event
 + 实现自定义事件
@@ -106,4 +110,13 @@
      如果对绘图进行缩放，所有之后的绘图也会被缩放。定位也会被缩放。如果scale(2,2)，那么绘图将定位于距离画布左上角两倍远的位置。
     translate()方法重新映射画布上的（0,0）位置。
     rotate（）方法旋转当前绘图。
+```
+# Radio
++ 多个单选按钮，双击可以取消
++ 使用的知识点
+```sh
+    单个单选按钮设置name属性相等，可以实现只选中一个按钮
+    根据name得到所有的标签元素：var radios = document.getElementsByName('Gender');
+    现在知道的好像是只要点击radio，就会是checked=true的状态，所以如果我们想要达到双击取消单选按钮，需要自己设置checked=false
+    如有不同意见，可以给出自己的见解
 ```

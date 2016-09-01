@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>radio</title>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+    <input type="radio" value="Female" name="Gender" onclick="chooseGender(this)" alt="false"/>Female
+    <input type="radio" value="Male" name="Gender" onclick="chooseGender(this)" alt="false"/>Male
+    <input type="radio" value="Undefined" name="Gender" onclick="chooseGender(this)" alt="false"/>Undefined
+    <script type="text/javascript">
+        function chooseGender (el) {
+            var radios = document.getElementsByName('Gender');
+            var currentRadio = el.value;
+            for (var i = radios.length - 1; i >= 0; i--) {
+                if (radios[i].value !== el.value) {
+                    radios[i].alt = 'false';
+                }
+            };
+            if (el.alt === 'false') {
+                el.checked = true;
+                el.alt = 'true'
+            } else {
+                el.checked = false;
+                el.alt = "false"
+            }
+        }
+
+    </script>
+</body>
+</html>
