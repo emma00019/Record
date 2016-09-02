@@ -120,3 +120,15 @@
     现在知道的好像是只要点击radio，就会是checked=true的状态，所以如果我们想要达到双击取消单选按钮，需要自己设置checked=false
     如有不同意见，可以给出自己的见解
 ```
+
+# Mask遮罩层
++ 给一个选中的div添加遮罩层
++ 使用的知识点
+```sh
+    getBoundingClientRect()该方法返回一个矩形对象，包含四个属性：left,top,right和bottom；分别表示元素各边与页面上边和左边的距离
+    getComputedStyle()方法得出所有在应该用的有效的样式和分解任何可能会包含值的基础计算后的元素的css属性值
+    offsetLeft是相对于直接父元素的/left是相对于父级元素的position为relative的offSetLeft返回的是数值不带单位，style.left返回的是带单位的数值
+    设置样式：el.style.prop = value
+    创建节点:document.createElement()
+    元素添加新的兄弟节点：el.parentNode.appendChild(child);
+```
