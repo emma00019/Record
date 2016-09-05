@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <style type="text/css">
+    @-webkit-keyframes can {
+        0%   {background: red; left:0px; top:0px;}
+        25%  {background: yellow; left:200px; top:0px;}
+        50%  {background: blue; left:200px; top:200px;}
+        75%  {background: green; left:0px; top:200px;}
+        100% {background: red; left:0px; top:0px;}
+    }
+    #canvas {
+        position:relative;
+        -webkit-animation: can 5s;
+    }
+    </style>
+</head>
+<body>
+    <!-- <div id="animation"></div> -->
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+        /*走马灯*/
+        var can = document.getElementById('canvas');
+        var ctx = can.getContext('2d');
+        var offset = 0;
+        function draw() {
+            offset++;
+            if (offset > 16) {
+                offset = 0;
+            }
+            ctx.clearRect(0,0, can.width, can.height);
+            ctx.setLineDash([9, 2]);
+            /*setLineDash()中的参数是一组描述交替绘制线段和间距（坐标空间单位）长度的数字，如果数组元素是奇数，数组的元素会被复制并重复。*/
+            ctx.lineDashOffset = -offset;
+            /*lineDashOffset设置虚线偏移量的属性*/
+            ctx.strokeRect(10,10, 100, 100);
+        }
+        // setInterval(draw, 20);
+        /*渐变*/
+        function lineGradient () {
+            var grd = ctx.createLinearGradient(0,0,0,170);
+            /*createLinearGradient(x0,y0,x1,y1);x0,y0,渐变开始点坐标;x1,y1渐变结束坐标*/
+            grd.addColorStop('0',"black");
+            grd.addColorStop('0.5',"white");
+            grd.addColorStop('1', "red");
+            ctx.fillStyle = grd;
+            ctx.fillRect(20,20,150,100);
+        }
+        // lineGradient();
+
+        function radialGradient () {
+            var grd = ctx.createRadialGradient(80, 70, 30, 80, 70, 50);
+            /*createLinearGradient(x0,y0,x1,y1);x0,y0,渐变开始点坐标;x1,y1渐变结束坐标*/
+            grd.addColorStop('0',"black");
+            grd.addColorStop('0.5',"white");
+            grd.addColorStop('1', "red");
+            ctx.fillStyle = grd;
+            ctx.fillRect(20,20,150,300);
+        }
+        // radialGradient();
+
+        /*文字*/
+        function write (argument) {
+            ctx.shadowOffsetX = 10;//阴影x方向的偏移
+            ctx.shadowOffsetY = 2;//阴影y方向的偏移
+            ctx.shadowBlur = 1; //阴影的模糊程度
+            ctx.shadowColor = 'rgba(0,0,0,0.7)';
+            ctx.font = '30px Times New Roman';
+            ctx.fillStyle = 'Black';
+            ctx.fillText('Sample String', 15, 30);//文字是实体
+            ctx.strokeStyle = 'red';
+            ctx.strokeText('Hello world', 15,100);//文字是镂空的
+        }
+        // write();
+        /*rotate*/
+        function circle () {
+            ctx.translate(75,75);
+            for(var i = 1; i< 6; i++) {
+                ctx.save();
+                ctx.fillStyle = 'rgb(' + (50*i) + ',' + (255-50*i) + ',255)';
+                for(var j=0;j<i*6;j++) {
+                    ctx.rotate(Math.PI * 2/(i*6));//旋转当前的绘图rotate方法的旋转点完全是按照[在其上\紧跟着它的]translate来确定旋转点的
+                    ctx.beginPath();
+                    ctx.arc(0,i*12.5,5,0,Math.PI * 2, true);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+        circle();
+    </script>
+</body>
+</html>
