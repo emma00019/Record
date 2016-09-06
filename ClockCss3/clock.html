@@ -58,7 +58,7 @@
                 var minutes = new Date().getMinutes();
                 var hdegree = hours * 30 + (minutes / 2); //5分钟时钟走一个刻度，也就是30度，30度需要平均分成60份（分钟走一圈60个刻度），所以比例因子是30/60
                 var hrotate = "rotate(" + hdegree + "deg)";
-                $('#hours').css({"-webkit-transform": hrotate});
+                $('#hour').css({"-webkit-transform": hrotate});
             }, 1000);
 
             setInterval(function(){
