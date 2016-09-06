@@ -132,3 +132,8 @@
     创建节点:document.createElement()
     元素添加新的兄弟节点：el.parentNode.appendChild(child);
 ```
+# html/css3实现文字旋转
++ 使用的知识点
+```sh
+    具体知识点见textEffect.html中的注释
+```
