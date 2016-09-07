@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div id="demo" style="position:absolute; width:100px; height:100px; background:#ccc; left:0; top:0;">
+    </div>
+    <script>
+        var demo = document.getElementById('demo');
+        function rander(){
+         demo.style.left = parseInt(demo.style.left) + 1 + 'px'; //每一帧向右移动1px
+        }
+        requestAnimationFrame(function(){
+         rander();
+         //当超过300px后才停止
+         if(parseInt(demo.style.left)<=300) requestAnimationFrame(arguments.callee);
+        });
+    </script>
+</body>
+</html>
+

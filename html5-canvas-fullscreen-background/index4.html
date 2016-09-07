@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7款HTML5 Canvas全屏背景动画特效04</title>
+<style>
+html {
+  height: 100%;
+  background-image: -webkit-radial-gradient(ellipse farthest-corner at center top, #000d4d 0%, #000105 100%);
+  background-image: radial-gradient(ellipse farthest-corner at center top, #000d4d 0%, #000105 100%);
+  /*
+  关于渐变的详情可以参考：http://www.w3cplus.com/css3/new-css3-radial-gradient.html
+  [Webkit引擎新式语法]-webkit-radial-gradient([<position> || <angle>,]?[<shape> || <size>,]?<color-stop>,<color-stop>[,<color-stop>]*);
+  [w3c标准语法]radial-gradient([[<shape> || <size>] [at <position>]?,| at <position>,]?<color-stop>[,<color-stop>]+);
+  <position>:主要用来定义径向渐变的圆心位置。此值类似css中的background-position属性，用于确定元素渐变的中心位置。如果这个参数省略了，其默认值为center;
+    其值主要有：
+      <length>:用长度值指定径向渐变圆心的横坐标或纵坐标。可以为负值。
+      <percent>：用百分比指定径向渐变圆心的横坐标或纵坐标。可以为负值;
+      left:设置左边为径向渐变圆心的横坐标值;right:设置右边为径向渐变圆心的纵坐标;
+      center:设置中间为径向渐变圆心的横坐标值或纵坐标;
+      top:设置顶部为径向渐变圆心的纵坐标值;
+      bottom:设置底部为径向渐变圆心的纵坐标值。
+  <shape>:主要用来定义径向渐变的形状。
+    主要包括两个值circle和ellipse;
+      circle：如果<size>和<length>大小相等，那么径向渐变是一个圆形，也就是用来指定圆形的径向渐变；
+      ellipse:如果<size>和<length>大小不想等，那么径向渐变是一个椭圆形，也就是用来指定椭圆形的径向渐变;
+  <size>:主要用来确定径向渐变的结束形状大小，如果省略了，其默认值为“farthest-corner”。可以给其显示的设置一些关键词;
+    主要值有：
+      closest-side:指定径向渐变的半径长度为从圆心到离圆心最近的边;
+      closest-corner:指定径向渐变的半径长度为从圆心到离圆心最近的角
+      farthest-side:指定径向渐变的半径长度为从圆心到离圆心最远的边;
+      farthest-corner:指定径向渐变的半径长度为从圆心到离圆心最远的角;
+  如果<shape>设置了为circle或者省略，<size>可能显示设置为<length>。表示的是用长度值指定径向渐变的横向或纵向直径长度，并根据横向或纵向的直径来确定径向渐变的形状是圆或椭圆。此值不能为负值。
+  如果<shape>设置了ellipse或或者省略，<size>可能显示设置为【<length>|<percentage>】。主要用来设置椭圆的大小。第一个代表椭圆的水平半径，第二个值代表垂直半径。这两个值除了使用<lenght>定义大小之外还可以使用<percentage>来定义这两个半径大小。
+  使用<percentage>定义值是相对于径向渐变容器的尺寸。同样不能为负值。
+  <color-stop>:径向渐变线上的停止颜色，类似于线性渐变的<color-stop>，径向江边的为径向渐变线从中心点向右扩散。其中0%表示渐变线的起始点，100%表示渐变线的与渐变容器相交结束的位置，而且其颜色停止可以定义一个负值;
+  */
+  cursor: move;
+}
+
+body {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Demo Buttons Style */
+.codrops-demos {
+	font-size: 0.8em;
+	text-align:center;
+	position:absolute;
+	z-index:99;
+	width:96%;
+}
+
+.codrops-demos a {
+	display: inline-block;
+	margin: 0.35em 0.1em;
+	padding: 0.5em 1.2em;
+	outline: none;
+	text-decoration: none;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 700;
+	border-radius: 2px;
+	font-size: 110%;
+	border: 2px solid transparent;
+	color:#fff;
+}
+
+.codrops-demos a:hover,
+.codrops-demos a.current-demo {
+	border-color: #383a3c;
+}
+</style>
+</head>
+
+<body>
+
+
+<nav class="codrops-demos">
+	<a href="index.html">Demo 1</a>
+	<a href="index2.html">Demo 2</a>
+	<a href="index3.html">Demo 3</a>
+	<a class="current-demo" href="index4.html">Demo 4</a>
+	<a href="index5.html">Demo 5</a>
+	<a href="index6.html">Demo 6</a>
+	<a href="index7.html">Demo 7</a>
+</nav>
+
+<canvas id="canv"></canvas>
+<script>
+var num = 200;
+var w = window.innerWidth;
+var h = window.innerHeight;
+var max = 100;
+var _x = 0;
+var _y = 0;
+var _z = 150;
+var dtr = function(d) {
+  return d * Math.PI / 180;
+};
+
+var rnd = function() {
+  return Math.sin(Math.floor(Math.random() * 360) * Math.PI / 180);
+};
+var dist = function(p1, p2, p3) {
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2) + Math.pow(p2.z - p1.z, 2));
+};
+
+var cam = {
+  obj: {
+    x: _x,
+    y: _y,
+    z: _z
+  },
+  dest: {//destination[目的地]
+    x: 0,
+    y: 0,
+    z: 1
+  },
+  dist: {//distance[距离]
+    x: 0,
+    y: 0,
+    z: 200
+  },
+  ang: {//angle【角度】
+    cplane: 0,
+    splane: 0,
+    ctheta: 0,
+    stheta: 0
+  },
+  zoom: 1,
+  disp: {
+    x: w / 2,
+    y: h / 2,
+    z: 0
+  },
+  upd: function() {
+    cam.dist.x = cam.dest.x - cam.obj.x;
+    cam.dist.y = cam.dest.y - cam.obj.y;
+    cam.dist.z = cam.dest.z - cam.obj.z;
+    cam.ang.cplane = -cam.dist.z / Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.z * cam.dist.z);
+    cam.ang.splane = cam.dist.x / Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.z * cam.dist.z);
+    cam.ang.ctheta = Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.z * cam.dist.z) / Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.y * cam.dist.y + cam.dist.z * cam.dist.z);
+    cam.ang.stheta = -cam.dist.y / Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.y * cam.dist.y + cam.dist.z * cam.dist.z);
+  }
+};
+
+var trans = {//transform
+  parts: {
+    sz: function(p, sz) {//size【缩放或扩大】
+      return {
+        x: p.x * sz.x,
+        y: p.y * sz.y,
+        z: p.z * sz.z
+      };
+    },
+    rot: {//rotate[旋转]
+      x: function(p, rot) {
+        return {
+          x: p.x,
+          y: p.y * Math.cos(dtr(rot.x)) - p.z * Math.sin(dtr(rot.x)),
+          z: p.y * Math.sin(dtr(rot.x)) + p.z * Math.cos(dtr(rot.x))
+        };
+      },
+      y: function(p, rot) {
+        return {
+          x: p.x * Math.cos(dtr(rot.y)) + p.z * Math.sin(dtr(rot.y)),
+          y: p.y,
+          z: -p.x * Math.sin(dtr(rot.y)) + p.z * Math.cos(dtr(rot.y))
+        };
+      },
+      z: function(p, rot) {
+        return {
+          x: p.x * Math.cos(dtr(rot.z)) - p.y * Math.sin(dtr(rot.z)),
+          y: p.x * Math.sin(dtr(rot.z)) + p.y * Math.cos(dtr(rot.z)),
+          z: p.z
+        };
+      }
+    },
+    pos: function(p, pos) {//position
+      return {
+        x: p.x + pos.x,
+        y: p.y + pos.y,
+        z: p.z + pos.z
+      };
+    }
+  },
+  pov: {
+    plane: function(p) {//水平面
+      return {
+        x: p.x * cam.ang.cplane + p.z * cam.ang.splane,
+        y: p.y,
+        z: p.x * -cam.ang.splane + p.z * cam.ang.cplane
+      };
+    },
+    theta: function(p) {//角度
+      return {
+        x: p.x,
+        y: p.y * cam.ang.ctheta - p.z * cam.ang.stheta,
+        z: p.y * cam.ang.stheta + p.z * cam.ang.ctheta
+      };
+    },
+    set: function(p) {//设置
+      return {
+        x: p.x - cam.obj.x,
+        y: p.y - cam.obj.y,
+        z: p.z - cam.obj.z
+      };
+    }
+  },
+  persp: function(p) {//perstep
+    return {
+      x: p.x * cam.dist.z / p.z * cam.zoom,
+      y: p.y * cam.dist.z / p.z * cam.zoom,
+      z: p.z * cam.zoom,
+      p: cam.dist.z / p.z
+    };
+  },
+  disp: function(p, disp) {
+    return {
+      x: p.x + disp.x,
+      y: -p.y + disp.y,
+      z: p.z + disp.z,
+      p: p.p
+    };
+  },
+  steps: function(_obj_, sz, rot, pos, disp) {
+    var _args = trans.parts.sz(_obj_, sz);
+    _args = trans.parts.rot.x(_args, rot);
+    _args = trans.parts.rot.y(_args, rot);
+    _args = trans.parts.rot.z(_args, rot);
+    _args = trans.parts.pos(_args, pos);
+    _args = trans.pov.plane(_args);
+    _args = trans.pov.theta(_args);
+    _args = trans.pov.set(_args);
+    _args = trans.persp(_args);
+    _args = trans.disp(_args, disp);
+    return _args;
+  }
+};
+/*匿名自执行函数*/
+(function() {
+  "use strict";
+  var threeD = function(param) {
+    this.transIn = {};
+    this.transOut = {};
+    this.transIn.vtx = (param.vtx);// vertical
+    this.transIn.sz = (param.sz);//size
+    this.transIn.rot = (param.rot);//rotate【旋转】
+    this.transIn.pos = (param.pos);//position
+  };
+
+  threeD.prototype.vupd = function() {//transition【平移】
+    this.transOut = trans.steps(
+
+      this.transIn.vtx,
+      this.transIn.sz,
+      this.transIn.rot,
+      this.transIn.pos,
+      cam.disp
+    );
+  };
+
+  var Build = function() {
+    this.vel = 0.04;
+    this.lim = 360;
+    this.diff = 200;
+    this.initPos = 100;
+    this.toX = _x;
+    this.toY = _y;
+    this.go();
+  };
+
+  Build.prototype.go = function() {
+    this.canvas = document.getElementById("canv");
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.$ = canv.getContext("2d");
+    this.$.globalCompositeOperation = 'source-over';
+    this.varr = [];
+    this.dist = [];
+    this.calc = [];
+
+    for (var i = 0, len = num; i < len; i++) {
+      this.add();
+    }
+
+    this.rotObj = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    this.objSz = {
+      x: w / 5,
+      y: h / 5,
+      z: w / 5
+    };
+  };
+
+  Build.prototype.add = function() {
+    this.varr.push(new threeD({
+      vtx: {
+        x: rnd(),
+        y: rnd(),
+        z: rnd()
+      },
+      sz: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      rot: {
+        x: 20,
+        y: -20,
+        z: 0
+      },
+      pos: {
+        x: this.diff * Math.sin(360 * Math.random() * Math.PI / 180),
+        y: this.diff * Math.sin(360 * Math.random() * Math.PI / 180),
+        z: this.diff * Math.sin(360 * Math.random() * Math.PI / 180)
+      }
+    }));
+    this.calc.push({ //calculate
+      x: 360 * Math.random(),
+      y: 360 * Math.random(),
+      z: 360 * Math.random()
+    });
+  };
+
+  Build.prototype.upd = function() { //update
+    cam.obj.x += (this.toX - cam.obj.x) * 0.05;
+    cam.obj.y += (this.toY - cam.obj.y) * 0.05;
+  };
+
+  Build.prototype.draw = function() {
+    this.$.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    cam.upd();
+    this.rotObj.x += 0.1;
+    this.rotObj.y += 0.1;
+    this.rotObj.z += 0.1;
+
+    for (var i = 0; i < this.varr.length; i++) {
+      for (var val in this.calc[i]) {
+        if (this.calc[i].hasOwnProperty(val)) {
+          this.calc[i][val] += this.vel;
+          if (this.calc[i][val] > this.lim) this.calc[i][val] = 0;
+        }
+      }
+
+      this.varr[i].transIn.pos = {
+        x: this.diff * Math.cos(this.calc[i].x * Math.PI / 180),
+        y: this.diff * Math.sin(this.calc[i].y * Math.PI / 180),
+        z: this.diff * Math.sin(this.calc[i].z * Math.PI / 180)
+      };
+      this.varr[i].transIn.rot = this.rotObj;
+      this.varr[i].transIn.sz = this.objSz;
+      this.varr[i].vupd();
+      if (this.varr[i].transOut.p < 0) continue;
+      var g = this.$.createRadialGradient(this.varr[i].transOut.x, this.varr[i].transOut.y, this.varr[i].transOut.p, this.varr[i].transOut.x, this.varr[i].transOut.y, this.varr[i].transOut.p * 2);
+      this.$.globalCompositeOperation = 'lighter';
+      g.addColorStop(0, 'hsla(255, 255%, 255%, 1)');
+      g.addColorStop(.5, 'hsla(' + (i + 2) + ',85%, 40%,1)');
+      g.addColorStop(1, 'hsla(' + (i) + ',85%, 40%,.5)');
+      this.$.fillStyle = g;
+      this.$.beginPath();
+      this.$.arc(this.varr[i].transOut.x, this.varr[i].transOut.y, this.varr[i].transOut.p * 2, 0, Math.PI * 2, false);
+      this.$.fill();
+      this.$.closePath();
+    }
+  };
+  Build.prototype.anim = function() {//animation【动画】
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        function(callback, element) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+    })();/*[该方法是为了兼容性具体可参考：http://www.zhangxinxu.com/wordpress/2013/09/css3-animation-requestanimationframe-tween-%E5%8A%A8%E7%94%BB%E7%AE%97%E6%B3%95/]把自执行匿名函数赋给一个变量是把执行的结果赋给这个变量也就是把window.requestAnimationFrame 或者 function(callback,element){window.setTimeout(callback,1000/60)};*/
+    var anim = function() {
+      this.upd();
+      this.draw();
+      window.requestAnimationFrame(anim);/*不需要自己指定绘制时间跟浏览器重绘时间一致【更多详情：http://www.jb51.net/article/70678.htm】*/
+      // window.setTimeout(anim, 1000/60);/*效果等价*/
+    }.bind(this);
+    window.requestAnimationFrame(anim);
+  };
+
+  Build.prototype.run = function() {
+    this.anim();
+
+    window.addEventListener('mousemove', function(e) {//电脑端
+      this.toX = (e.clientX - this.canvas.width / 2) * -0.8;//移动到哪里的x坐标
+      this.toY = (e.clientY - this.canvas.height / 2) * 0.8;//移动到哪里的y坐标
+    }.bind(this));
+    window.addEventListener('touchmove', function(e) {//手机端
+      e.preventDefault();
+      this.toX = (e.touches[0].clientX - this.canvas.width / 2) * -0.8;
+      this.toY = (e.touches[0].clientY - this.canvas.height / 2) * 0.8;
+    }.bind(this));
+    window.addEventListener('mousedown', function(e) {//电脑端鼠标点击添加新的星星
+      for (var i = 0; i < 100; i++) {
+        this.add();//添加星星
+      }
+    }.bind(this));
+    window.addEventListener('touchstart', function(e) {//手机端
+      e.preventDefault();
+      for (var i = 0; i < 100; i++) {
+        this.add();
+      }
+    }.bind(this));
+  };
+  var app = new Build();
+  app.run();
+})();
+window.addEventListener('resize', function() {
+  canvas.width = w = window.innerWidth;
+  canvas.height = h = window.innerHeight;
+}, false);
+</script>
+</body>
+</html>

@@ -137,3 +137,76 @@
 ```sh
     具体知识点见textEffect.html中的注释
 ```
+# html/css3实现酷炫背景
++ 使用的知识点
+```sh
+    window.requestAnimationFrame和setTimeout的联系和区别：
+        实现效果一致；
+        但是requestAnimationFrame不需要自己指定回调函数的运行时间，而是跟着浏览器内建的刷新频率来执行回调的；
+        requestAnimationFrame会把每帧中的所有Dom操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般为每秒60帧；
+        requestAnimationFrame比set
+        在隐藏或不可见元素中，requestAnimationFrame将不会重绘或回流，这就意味着更少的cpu，gpu和内存使用量。
+        总结：requestAnimationFrame优于setTimeout/setInterval的地方在于它是浏览器专门为动画提供的api，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停，有效节省了cpu开销。
+    requestAnimationFrame会返回一个资源标识符，可以把它作为参数传入到cancelAnimationFrame函数中，来取消requestAnimationFrame的 回调。
+    context.createRadialGradient(x0,y0,r0,x1,y1,r1);
+        x0:渐变的开始圆的x坐标
+        y0:渐变的开始圆的y坐标
+        r0:开始圆的半径
+        x1:渐变的结束圆的x坐标
+        y1:渐变的结束圆的y坐标
+        r1:结束圆的半径
+    gradient.addColorStop(stop,color)
+        stop:介于0.0与1.0之间的值，表示渐变中开始与结束之间的位置
+        color:在结束位置显示的css颜色值
+    context.acr(x,y,r,sAngle,eAngle,counterclockwise[顺时针/逆时针])
+    context.drawImage(img,x,y):在画布上定位图像
+    context.drawImage(img,x,y,width,height):在画布上定位图像，并规定图像的宽度和高度
+    context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height):剪切图像，并在画布上定位被剪切的部分
+    context.globalAlpha:设置透明度
+    hsla（h s l a）：
+        H:Hue（色调）。0（或360）表示红色，120表示绿色，240表示蓝色，也可取其他数值来指定颜色。取值为：0-360
+        S:Saturation(饱和度)。取值为：0.0%-100.0%
+        L:Lightness(亮度)。取值为：0.0%-100.0%
+        A:Alpha透明度。取值0-1之间
+    shadowBlur:设置或返回阴影的级别
+    shadowColor:设置或返回阴影的颜色
+    querySelector():返回文档中匹配指定css选择器的一个元素[仅仅返回匹配指定选择器的第一个元素，如果需要返回所有的元素，需要使用querySelectorAll()方法]
+    css3 filter:
+        语法：
+            elm {
+                filter: none | <filter-function> [<fillter-function>] *
+            }
+        filter-function:
+            grayscale:灰度
+            sepia:褐色
+            saturate:饱和度
+            hue-rotate:色相旋转
+            invert:反色
+            opacity:透明度
+            brightness:亮度
+            contrast:对比度
+            blur:模糊
+            drop-shadow:阴影
+    animation:name duration timing-function delay iteration-count direction
+        name:规定需要绑定到选择器的keyframe名称
+        duration:规定完成动画所花费的时间，以秒或毫秒计
+        timing-function:规定动画的【速度】曲线
+            linear:动画从头到尾的速度是相同的
+            ease:默认，动画以低速开始，然后加快，在结束前变慢
+            ease-in:动画以低速开始
+            ease-out:动画以低速结束
+            ease-in-out:动画以低速开始和结束
+            cubic-bezier(n,n,n,n):在cubic-bezier函数中自己的值。可能的值是从0到1的数值
+        delay:规定在动画开始之前的延迟
+        iteration-count:动画应该播放的次数
+            n:播放次数的数值
+            infinite:无限次播放
+        direction:规定是否应该轮流反向播放动画
+            normal:正常播放
+            alternate:轮流反向播放
+    transform-origin:设置被转换元素的位置
+        x-axis:left|center|right|length|%
+        y-axis:top|center|bottom|length|%
+        z-axis:length
+
+```
