@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>star</title>
+</head>
+<body>
+    <div>
+        <canvas id="canvas" width="800px" height="600"></canvas>
+    </div>
+    <script type="text/javascript">
+        var can;
+        var ctx;
+        var w;
+        var h;
+        var girlPic = new Image();
+        var starPic = new Image();
+        var num = 60;
+        var stars = [];
+        var lastTime;
+        var deltaTime;
+        var switchy = false;
+        var life = 0;
+        function init () {
+            can = document.getElementById('canvas');
+            ctx = can.getContext("2d");
+            w = can.width;
+            h = can.height;
+            document.addEventListener("mousemove", mousemove,false);
+            girlPic.src = 'image/girl.jpg';
+            starPic.src = 'image/star.png';
+            for (var i = 0; i < num; i++) {
+                var obj = new starObj();
+                stars.push(obj);
+                stars[i].init();
+            };
+            lastTime = Date.now();
+            gameloop();
+        }
+        function mousemove (e) {
+            if (e.offsetX || e.layerX) {
+                var pX = e.offsetX == undefined ? e.layerX : e.offsetX;
+                var py = e.offsetY == undefined ? e.layerY : e.offsetY;
+                if (pX>100 && pX<700 && py > 150 && py < 450) {
+                    switchy = true;
+                } else {
+                    switchy = false;
+                }
+            };
+        }
+        function aliveUpdate () {
+            //globalAlpha 全局透明度
+            if (switchy) {
+                life += 0.03 * deltaTime * 0.05;//0.05是调整速度
+                if(life > 1) {
+                    life = 1;
+                }
+            } else {
+                life -= 0.03 * deltaTime * 0.05;
+                if (life < 0 ) {
+                    life = 0;
+                }
+            }
+        }
+        function gameloop (argument) {
+            window.requestAnimationFrame(gameloop);//依据设备来确定每次回调的时间，提高效率。
+            var now = Date.now();
+            deltaTime = now - lastTime;
+            lastTime = now;
+
+            drawBackground();
+            drawGirl();
+            aliveUpdate();
+            drawStars();
+        }
+        function drawBackground () {
+            ctx.fillStyle = "#393550";
+            ctx.fillRect(0,0,w,h);
+        }
+        function drawGirl () {
+            //drawImage(img,x,y)canvas上的坐标系
+            //x轴坐标向右，y轴坐标向下
+            ctx.drawImage(girlPic,100,150, 600, 300);
+        }
+        //star object start
+        var starObj = function () {
+            this.x;
+            this.y;
+            this.picNo;//显示不同位置的星星
+            this.timer;//解决闪烁太快的问题
+            this.xSpd;//解决位移问题
+            this.ySpd;
+        }
+        starObj.prototype.init = function() {
+            this.x = Math.random() * 600 + 100;//   Math.random();[0,1)
+            this.y = Math.random() * 300 + 150;
+            this.picNo = Math.floor(Math.random() * 7);//解决星星同步闪烁的问题【数据帧一样】让星星随机闪烁
+            this.timer = 0;//解决
+            this.xSpd = Math.random() * 3 - 1.5;//解决随机位移-1.5[0,3)->[-1.5, 1.5),解决只向右下方向移动的问题
+            this.ySpd = Math.random() * 3 - 1.5;
+        }
+        starObj.prototype.draw = function() {
+            ctx.save();
+            ctx.globalAlpha = life;//解决鼠标进入显示星星，鼠标移出canvas不显示星星
+            ctx.drawImage(starPic, this.picNo * 7, 0, 7, 7, this.x, this.y, 7, 7);
+            ctx.restore();
+        }
+        starObj.prototype.update = function () {
+            this.x += this.xSpd * deltaTime * 0.003;//流畅运行
+            this.y += this.ySpd * deltaTime * 0.003;
+
+            //this.x超过范围重新生成
+            if (this.x < 100 || this.x > 700) {
+                this.init();
+                return;
+            };
+            //this.y超过范围重新生成
+            if (this.y < 150 || this.y > 450) {
+                this.init();
+                return;
+            };
+            this.timer += deltaTime;
+            if (this.timer >= 50) {
+                this.picNo += 1;
+                this.picNo %= 7;
+                this.timer = 0;
+            }
+        }
+        //star object end
+        function drawStars () {
+            for (var i = 0; i < num; i++) {
+                stars[i].draw();
+                stars[i].update();
+            }
+        }
+        document.body.onload = init;
+    </script>
+</body>
+</html>
