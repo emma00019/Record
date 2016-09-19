@@ -95,7 +95,7 @@
             this.x = Math.random() * 600 + 100;//   Math.random();[0,1)
             this.y = Math.random() * 300 + 150;
             this.picNo = Math.floor(Math.random() * 7);//解决星星同步闪烁的问题【数据帧一样】让星星随机闪烁
-            this.timer = 0;//解决
+            this.timer = 0;//解决闪烁太快的问题
             this.xSpd = Math.random() * 3 - 1.5;//解决随机位移-1.5[0,3)->[-1.5, 1.5),解决只向右下方向移动的问题
             this.ySpd = Math.random() * 3 - 1.5;
         }
